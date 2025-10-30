@@ -12,6 +12,11 @@ public class WorkoutSplit {
 
     private String name; // e.g. "Leg Day", "Push Day"
 
+    @ManyToOne
+    @JoinColumn(name = "user_id") // foreign key column
+    @JsonBackReference // prevents infinite recursion when serializing
+    private User user;
+
     @OneToMany(mappedBy = "split", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // serialize the list of exercises
     private List<Exercise> exercises;
