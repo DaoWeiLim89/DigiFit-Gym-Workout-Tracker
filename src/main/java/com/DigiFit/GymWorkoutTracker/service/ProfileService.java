@@ -38,4 +38,14 @@ public class ProfileService {
         
         return profileRepository.save(existing);
     }
+    public void deleteProfile(UUID userId) {
+        if (!profileRepository.existsById(userId)) {
+            throw new RuntimeException("Profile not found");
+        }
+        profileRepository.deleteById(userId);
+    }
+
+    public boolean profileExists(UUID userId) {
+        return profileRepository.existsById(userId);
+    }
 }
