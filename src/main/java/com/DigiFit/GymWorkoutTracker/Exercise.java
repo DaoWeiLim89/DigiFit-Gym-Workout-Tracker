@@ -3,7 +3,10 @@ package com.DigiFit.GymWorkoutTracker;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 @Entity
 public class Exercise {
@@ -12,7 +15,9 @@ public class Exercise {
     private Long id;
     private int orderIndex;  // Order in the split
 
+    @Column(nullable = false)
     private String name; // e.g. "Deadlift"
+
     private int sets;    // number of sets the user usually does
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -22,7 +27,8 @@ public class Exercise {
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // serialize the entries list
-    private List<WorkoutEntry> entries;
+    private List<WorkoutEntry> entries = new  ArrayList<>();//prevents null exceptions
+
 
     // ----- Constructors -----
     public Exercise() {}
@@ -59,5 +65,23 @@ public class Exercise {
     public void removeEntry(WorkoutEntry entry) {
         entries.remove(entry);
         entry.setExercise(null);
+    }
+
+    public WorkoutEntry getLatestEntry() {
+        return entries.stream()
+                .max(Comparator.comparing(WorkoutEntry::getDate))
+                .orElse(null);
+    }
+
+    // Get latest weight used
+    public Double getLatestWeight() {
+        WorkoutEntry latest = getLatestEntry();
+        return latest != null ? latest.getWeight() : null;
+    }
+
+    // Get date of last workout
+    public LocalDate getLastWorkoutDate() {
+        WorkoutEntry latest = getLatestEntry();
+        return latest != null ? latest.getDate() : null;
     }
 }
