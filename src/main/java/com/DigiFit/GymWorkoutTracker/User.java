@@ -52,4 +52,11 @@ public class User {
         splits.remove(split);
         split.setUser(null);
     }
+
+    public WorkoutSplit getActiveSplit() {
+        return splits.stream()
+                .filter(WorkoutSplit::isActive)
+                .findFirst()
+                .orElse(null);
+    }
 }
