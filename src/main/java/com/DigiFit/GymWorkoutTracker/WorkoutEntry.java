@@ -10,8 +10,13 @@ public class WorkoutEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDate date;
+
+    @Column(nullable = false)
     private double weight;
+
+    @Column(nullable = false)
     private int reps;
 
     @ManyToOne(fetch = FetchType.LAZY)
