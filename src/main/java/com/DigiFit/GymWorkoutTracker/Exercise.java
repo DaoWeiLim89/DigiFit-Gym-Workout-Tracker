@@ -10,6 +10,7 @@ public class Exercise {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private int orderIndex;  // Order in the split
 
     private String name; // e.g. "Deadlift"
     private int sets;    // number of sets the user usually does
@@ -45,6 +46,9 @@ public class Exercise {
 
     public List<WorkoutEntry> getEntries() { return entries; }
     public void setEntries(List<WorkoutEntry> entries) { this.entries = entries; }
+
+    public int getOrderIndex() { return orderIndex; }
+    public void setOrderIndex(int orderIndex) { this.orderIndex = orderIndex; }
 
     // ----- Helper Methods -----
     public void addEntry(WorkoutEntry entry) {

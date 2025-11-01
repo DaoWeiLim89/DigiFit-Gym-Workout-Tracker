@@ -12,6 +12,7 @@ public class WorkoutSplit {
     private Long id;
 
     private String name; // e.g. "Leg Day", "Push Day"
+    private boolean active;
 
     @ManyToOne
     @JoinColumn(name = "user_id") // foreign key column
@@ -29,6 +30,10 @@ public class WorkoutSplit {
     }
 
     // ----- Getters & Setters -----
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     
@@ -43,6 +48,7 @@ public class WorkoutSplit {
 
     // ----- Helper Methods -----
     public void addExercise(Exercise exercise) {
+        exercise.setOrderIndex(exercises.size()); // Auto-assign order
         exercises.add(exercise);
         exercise.setSplit(this);
     }
@@ -50,5 +56,10 @@ public class WorkoutSplit {
     public void removeExercise(Exercise exercise) {
         exercises.remove(exercise);
         exercise.setSplit(null);
+    }
+
+    // Get exercise count (useful for API responses)
+    public int getExerciseCount() {
+        return exercises.size();
     }
 }
