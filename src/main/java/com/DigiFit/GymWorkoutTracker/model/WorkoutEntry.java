@@ -1,4 +1,4 @@
-package com.DigiFit.GymWorkoutTracker;
+package com.DigiFit.GymWorkoutTracker.model;
 
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonBackReference;
