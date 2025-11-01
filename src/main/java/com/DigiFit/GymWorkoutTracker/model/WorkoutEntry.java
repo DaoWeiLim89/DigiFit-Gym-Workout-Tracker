@@ -5,11 +5,15 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.time.LocalDate;
 
 @Entity
+@Table(name = "workout_entries")
 public class WorkoutEntry {
+
+    // ----- Primary Key -----
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ----- Basic Info -----
     @Column(nullable = false)
     private LocalDate date;
 
@@ -19,6 +23,7 @@ public class WorkoutEntry {
     @Column(nullable = false)
     private int reps;
 
+    // ----- Relationships -----
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id")
     @JsonBackReference // prevent recursion with Exercise
@@ -26,6 +31,7 @@ public class WorkoutEntry {
 
     // ----- Constructors -----
     public WorkoutEntry() {}
+
     public WorkoutEntry(LocalDate date, double weight, int reps) {
         this.date = date;
         this.weight = weight;

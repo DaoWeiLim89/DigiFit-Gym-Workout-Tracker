@@ -4,47 +4,79 @@ import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.UUID;
+import java.time.OffsetDateTime;
 
 @Entity
-public class User {
+@Table(name = "profiles")
+public class Profile {
+
+    // ----- Primary Key -----
+    // Supabase uses UUIDs (from auth.users)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(columnDefinition = "uuid")
+    private UUID id;
 
-    @Column(unique = true, nullable = false)
-    private String username;
+    // ----- Basic Information -----
+    @Column(nullable = true)
+    private String name;
 
-    @Column(unique = true, nullable = false)
-    private String email;
+    @Column(nullable = true)
+    private Double weight;
 
-    @Column(nullable = false)
-    private String passwordHash;
+    @Column(nullable = true)
+    private Double height;
 
+    @Column(name = "weight_unit", nullable = false)
+    private String weightUnit = "kg";
+
+    @Column(name = "height_unit", nullable = false)
+    private String heightUnit = "cm";
+
+    @Column(nullable = true)
+    private String gender;
+
+    @Column(name = "created_at", columnDefinition = "timestamptz")
+    private OffsetDateTime createdAt;
+
+    // ----- Relationships -----
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<WorkoutSplit> splits = new ArrayList<>();
 
     // ----- Constructors -----
-    public User() {}
+    public Profile() {}
 
-    public User(String username, String email, String passwordHash) {
-        this.username = username;
-        this.email = email;
-        this.passwordHash = passwordHash;
+    public Profile(UUID id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     // ----- Getters & Setters -----
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getId() { return id; }
+    public void setId(UUID id) { this.id = id; }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public Double getWeight() { return weight; }
+    public void setWeight(Double weight) { this.weight = weight; }
 
-    public String getPasswordHash() { return passwordHash; }
-    public void setPasswordHash(String passwordHash) { this.passwordHash = passwordHash; }
+    public Double getHeight() { return height; }
+    public void setHeight(Double height) { this.height = height; }
+
+    public String getWeightUnit() { return weightUnit; }
+    public void setWeightUnit(String weightUnit) { this.weightUnit = weightUnit; }
+
+    public String getHeightUnit() { return heightUnit; }
+    public void setHeightUnit(String heightUnit) { this.heightUnit = heightUnit; }
+
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+
+    public OffsetDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }
+
     public List<WorkoutSplit> getSplits() { return splits; }
     public void setSplits(List<WorkoutSplit> splits) { this.splits = splits; }
 

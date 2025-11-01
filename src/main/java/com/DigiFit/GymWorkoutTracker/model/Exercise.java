@@ -9,17 +9,24 @@ import java.util.List;
 import java.util.Comparator;
 
 @Entity
+@Table(name = "exercises")
 public class Exercise {
+
+    // ----- Primary Key -----
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int orderIndex;  // Order in the split
 
+    // Order in the split
+    private int orderIndex;
+
+    // ----- Basic Info -----
     @Column(nullable = false)
     private String name; // e.g. "Deadlift"
 
     private int sets;    // number of sets the user usually does
 
+    // ----- Relationships -----
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "split_id")
     @JsonBackReference // prevent infinite recursion with WorkoutSplit
@@ -27,11 +34,11 @@ public class Exercise {
 
     @OneToMany(mappedBy = "exercise", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // serialize the entries list
-    private List<WorkoutEntry> entries = new  ArrayList<>();//prevents null exceptions
-
+    private List<WorkoutEntry> entries = new ArrayList<>(); // prevents null exceptions
 
     // ----- Constructors -----
     public Exercise() {}
+
     public Exercise(String name, int sets) {
         this.name = name;
         this.sets = sets;

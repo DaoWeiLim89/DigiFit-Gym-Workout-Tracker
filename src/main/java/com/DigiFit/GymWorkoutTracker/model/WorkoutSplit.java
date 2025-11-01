@@ -7,21 +7,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Comparator;
 
-
 @Entity
+@Table(name = "workout_splits")
 public class WorkoutSplit {
+
+    // ----- Primary Key -----
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // ----- Basic Info -----
     @Column(nullable = false)
     private String name; // e.g. "Leg Day", "Push Day"
-    private boolean active;
 
+    @Column(nullable = false)
+    private boolean active = false;
+
+    // ----- Relationships -----
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // foreign key column
     @JsonBackReference // prevents infinite recursion when serializing
-    private User user;
+    private Profile user; // Changed from User to Profile
 
     @OneToMany(mappedBy = "split", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // serialize the list of exercises
@@ -29,24 +35,24 @@ public class WorkoutSplit {
 
     // ----- Constructors -----
     public WorkoutSplit() {}
+
     public WorkoutSplit(String name) {
         this.name = name;
         this.active = false;
     }
 
     // ----- Getters & Setters -----
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public Profile getUser() { return user; }
+    public void setUser(Profile user) { this.user = user; }
 
     public List<Exercise> getExercises() { return exercises; }
     public void setExercises(List<Exercise> exercises) { this.exercises = exercises; }
