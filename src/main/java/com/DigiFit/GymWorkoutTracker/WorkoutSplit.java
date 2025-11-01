@@ -3,7 +3,10 @@ package com.DigiFit.GymWorkoutTracker;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
+
 
 @Entity
 public class WorkoutSplit {
@@ -11,22 +14,24 @@ public class WorkoutSplit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name; // e.g. "Leg Day", "Push Day"
     private boolean active;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id") // foreign key column
     @JsonBackReference // prevents infinite recursion when serializing
     private User user;
 
     @OneToMany(mappedBy = "split", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference // serialize the list of exercises
-    private List<Exercise> exercises;
+    private List<Exercise> exercises = new ArrayList<>();
 
     // ----- Constructors -----
     public WorkoutSplit() {}
     public WorkoutSplit(String name) {
         this.name = name;
+        this.active = false;
     }
 
     // ----- Getters & Setters -----
@@ -56,6 +61,13 @@ public class WorkoutSplit {
     public void removeExercise(Exercise exercise) {
         exercises.remove(exercise);
         exercise.setSplit(null);
+    }
+
+    // Get exercises in order
+    public List<Exercise> getExercisesInOrder() {
+        return exercises.stream()
+                .sorted(Comparator.comparingInt(Exercise::getOrderIndex))
+                .toList();
     }
 
     // Get exercise count (useful for API responses)
