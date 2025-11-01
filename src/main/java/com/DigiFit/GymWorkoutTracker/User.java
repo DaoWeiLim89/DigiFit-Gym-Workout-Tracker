@@ -3,6 +3,7 @@ package com.DigiFit.GymWorkoutTracker;
 import jakarta.persistence.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import java.util.List;
+import java.util.ArrayList;
 
 @Entity
 public class User {
@@ -10,13 +11,18 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String username;
+
+    @Column(unique = true, nullable = false)
     private String email;
-    private String passwordHash; // store a hashed password, never plain text!
+
+    @Column(nullable = false)
+    private String passwordHash;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference // serialize the list of splits
-    private List<WorkoutSplit> splits;
+    @JsonManagedReference
+    private List<WorkoutSplit> splits = new ArrayList<>();
 
     // ----- Constructors -----
     public User() {}
