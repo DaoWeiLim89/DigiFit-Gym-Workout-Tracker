@@ -28,6 +28,32 @@ public class AuthController {
         ));
     }
 
+    @Autowired
+    private AuthService authService;
+
+    /**
+     * Handles the signup process by getting information and calling authService.signUp
+     * to create account using Supabase
+     */
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String password = body.get("password");
+        String name = body.getOrDefault("name", "");
+        return ResponseEntity.ok(authService.signUp(email, password, name));
+    }
+
+    /**
+     * Handles the login process by getting information and calling authService.login
+     * to create account using Supabase
+     */
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        String email = body.get("email");
+        String password = body.get("password");
+        return ResponseEntity.ok(authService.login(email, password));
+    }
+
     /**
      * Health check endpoint (public)
      */
