@@ -1,5 +1,4 @@
 package com.DigiFit.GymWorkoutTracker.security;
-
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.*;
@@ -10,15 +9,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.UUID;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
-    private final Key key;
+    private final SecretKey key;
 
     public JwtAuthFilter(@Value("${supabase.jwt.secret}") String jwtSecret) {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -39,12 +38,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = header.substring(7);
 
         try {
-            Jws<Claims> claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
+            Jws<Claims> claims = Jwts.parser()
+                    .verifyWith(key)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
 
-            String userIdStr = claims.getBody().get("sub", String.class);
+            String userIdStr = claims.getPayload().get("sub", String.class);
             UUID userId = UUID.fromString(userIdStr);
 
             // Set authentication in Spring Security context
