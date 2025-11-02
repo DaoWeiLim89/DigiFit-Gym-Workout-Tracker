@@ -10,6 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import java.util.Base64;
 import java.io.IOException;
 import java.security.Key;
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final Key key;
 
     public JwtAuthFilter(@Value("${supabase.jwt.secret}") String jwtSecret) {
-        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     @Override
@@ -44,7 +46,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     .build()
                     .parseClaimsJws(token);
 
-            String userIdStr = claims.getBody().get("sub", String.class);
+            String userIdStr = claims.getBody().getSubject(); // shorter and idiomatic
+            if (userIdStr == null) {
+                throw new JwtException("Missing 'sub' claim");
+            }
             UUID userId = UUID.fromString(userIdStr);
 
             // Set authentication in Spring Security context
