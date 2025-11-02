@@ -40,7 +40,7 @@ public class AuthController {
         String email = body.get("email");
         String password = body.get("password");
         String name = body.getOrDefault("name", "");
-        return ResponseEntity.ok(authService.signUp(email, password, name));
+        return ResponseEntity.ok(AuthService.signUp(email, password, name));
     }
 
     /**
@@ -51,7 +51,7 @@ public class AuthController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");
-        return ResponseEntity.ok(authService.login(email, password));
+        return ResponseEntity.ok(AuthService.login(email, password));
     }
 
     /**
