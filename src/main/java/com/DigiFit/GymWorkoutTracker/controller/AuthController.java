@@ -1,47 +1,38 @@
 package com.DigiFit.GymWorkoutTracker.controller;
 
-import com.DigiFit.GymWorkoutTracker.model.User;
-import com.DigiFit.GymWorkoutTracker.security.JwtService;
-import com.DigiFit.GymWorkoutTracker.service.UserService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final JwtService jwtService;
-    private final UserService userService;
-
-    public AuthController(JwtService jwtService, UserService userService) {
-        this.jwtService = jwtService;
-        this.userService = userService;
-    }
-
-    // ✅ Registration endpoint
-    @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
-        // Save new user to database (Supabase)
-        userService.saveUser(user);
-        String token = jwtService.generateToken(user.getUsername());
-        return ResponseEntity.ok(Map.of("token", token));
-    }
-
-    // ✅ Login endpoint
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> credentials) {
-        String username = credentials.get("username");
-        String password = credentials.get("password");
-
-        // Validate username/password
-        if (!userService.validateUser(username, password)) {
-            return ResponseEntity.status(401).body(Map.of("error", "Invalid credentials"));
+    /**
+     * Verify that the user is authenticated
+     * This endpoint is called after Supabase authentication to verify the JWT works
+     */
+    @GetMapping("/verify")
+    public ResponseEntity<?> verifyAuth(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
         }
 
-        // Generate JWT for authenticated user
-        String token = jwtService.generateToken(username);
-        return ResponseEntity.ok(Map.of("token", token));
+        UUID userId = (UUID) authentication.getPrincipal();
+        return ResponseEntity.ok(Map.of(
+                "authenticated", true,
+                "userId", userId.toString()
+        ));
+    }
+
+    /**
+     * Health check endpoint (public)
+     */
+    @GetMapping("/health")
+    public ResponseEntity<?> health() {
+        return ResponseEntity.ok(Map.of("status", "healthy"));
     }
 }
