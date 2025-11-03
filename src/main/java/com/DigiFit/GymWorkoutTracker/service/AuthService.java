@@ -12,10 +12,10 @@ import java.util.*;
 @Service
 public class AuthService {
 
-    @Value("${supabase.url}")
+    @Value("${DATABASE_URL}")
     private String supabaseUrl;
 
-    @Value("${supabase.service.key}")
+    @Value("${SERVICE_ROLES}")
     private String supabaseServiceKey;
 
     private final ProfileRepository profileRepository;
@@ -98,4 +98,3 @@ public class AuthService {
         );
     }
 }
-
