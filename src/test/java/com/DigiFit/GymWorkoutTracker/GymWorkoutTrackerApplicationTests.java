@@ -10,6 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.http.HttpStatus;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -107,6 +109,28 @@ class GymWorkoutTrackerApplicationTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value("fake-jwt-access-token-12345"))
                 .andExpect(jsonPath("$.user.username").value("testuser"));
+    }
+
+    @Test
+    void testLoginEndpoint_WithBadCredentials_ShouldFail() throws Exception {
+        // 1. Define the JSON body for the login request
+        String loginJson = "{\"email\":\"test@example.com\", \"password\":\"wrongpass\"}";
+
+        // 2. Set up the mock to throw an exception
+        // We'll simulate the service throwing an "Unauthorized" exception
+        when(authService.login(any(String.class), any(String.class)))
+                .thenThrow(new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Bad credentials"));
+
+        // 3. Perform the request and check the results
+        mockMvc.perform(
+                        post("/api/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(loginJson)
+                )
+                // We expect the server to return a 401 Unauthorized status
+                .andExpect(status().isUnauthorized())
+                // Optionally, check the error message in the response body
+                .andExpect(jsonPath("$.error").value("Invalid credentials"));
     }
 
     // TEST FOR A SECURED ENDPOINT (SUCCESS)

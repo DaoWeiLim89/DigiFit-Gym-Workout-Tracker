@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.Map;
 import java.util.UUID;
@@ -15,6 +17,8 @@ import java.util.UUID;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    @Autowired
+    private AuthService authService;
     /**
      * Verify that the user is authenticated
      * This endpoint is called after Supabase authentication to verify the JWT works
@@ -31,9 +35,6 @@ public class AuthController {
                 "userId", userId.toString()
         ));
     }
-
-    @Autowired
-    private AuthService authService;
 
     /**
      * Handles the signup process by getting information and calling authService.signUp
@@ -54,9 +55,23 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        String email = body.get("email");
-        String password = body.get("password");
-        return ResponseEntity.ok(authService.login(email, password));
+        try {
+            String email = body.get("email");
+            String password = body.get("password");
+            Map<String, Object> response = authService.login(email, password);
+            return ResponseEntity.ok(response);
+
+        } catch (HttpClientErrorException e) {
+            // If login fails (e.g., 401 from Supabase), return a 401
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid credentials"));
+        } catch (Exception e) {
+            // Catch any other unexpected errors
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 
     /**
