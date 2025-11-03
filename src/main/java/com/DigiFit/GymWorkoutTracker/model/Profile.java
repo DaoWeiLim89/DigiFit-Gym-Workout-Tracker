@@ -39,7 +39,7 @@ public class Profile {
     @Column(nullable = true)
     private String gender;
 
-    @Column(name = "created_at", columnDefinition = "timestamptz")
+    @Column(name = "created_at")
     private OffsetDateTime createdAt;
 
     // ----- Relationships -----
