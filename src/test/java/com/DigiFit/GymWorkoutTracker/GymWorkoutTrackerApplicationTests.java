@@ -19,7 +19,8 @@ import org.springframework.test.context.TestPropertySource;
         "supabase.key=test-key",
         "DATABASE_URL=jdbc:h2:mem:testdb",
         "DATABASE_USERNAME=sa",
-        "DATABASE_PASSWORD="
+        "DATABASE_PASSWORD=",
+        "SERVICE_ROLES=dummy-service-role-key"
 })
 class GymWorkoutTrackerApplicationTests {
 
