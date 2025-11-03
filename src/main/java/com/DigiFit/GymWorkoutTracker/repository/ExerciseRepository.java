@@ -34,4 +34,7 @@ public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
      */
     @Query("SELECT e FROM Exercise e WHERE e.split.user.id = :userId AND LOWER(e.name) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Exercise> findByUserIdAndNameContaining(@Param("userId") UUID userId, @Param("name") String name);
+
+    @Query("SELECT e FROM Exercise e LEFT JOIN FETCH e.entries WHERE e.id = :exerciseId")
+    Exercise findByIdWithEntries(@Param("exerciseId") Long exerciseId);
 }
