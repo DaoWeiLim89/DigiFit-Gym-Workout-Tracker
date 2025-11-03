@@ -5,6 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Map;
 import java.util.UUID;
@@ -38,6 +40,7 @@ public class AuthController {
      * to create account using Supabase
      */
     @PostMapping("/signup")
+    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> signup(@RequestBody Map<String, String> body) {
         String email = body.get("email");
         String password = body.get("password");

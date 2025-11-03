@@ -12,7 +12,7 @@ import java.util.*;
 @Service
 public class AuthService {
 
-    @Value("${DATABASE_URL}")
+    @Value("${SUPABASE_URL}")
     private String supabaseUrl;
 
     @Value("${SERVICE_ROLES}")
