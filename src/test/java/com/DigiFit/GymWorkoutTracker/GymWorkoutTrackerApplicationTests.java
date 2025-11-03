@@ -16,7 +16,10 @@ import org.springframework.test.context.TestPropertySource;
         "JWT_SECRET=test-secret-key-for-testing-purposes-only-min-256-bits",
         "supabase.jwt.secret=test-secret-key-for-testing-purposes-only-min-256-bits",
         "supabase.url=http://localhost:54321",
-        "supabase.key=test-key"
+        "supabase.key=test-key",
+        "DATABASE_URL=jdbc:h2:mem:testdb",
+        "DATABASE_USERNAME=sa",
+        "DATABASE_PASSWORD="
 })
 class GymWorkoutTrackerApplicationTests {
 
